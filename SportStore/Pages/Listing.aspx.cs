@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using SportStore.Models.Repository;
 using SportStore.Models;
 using System.Linq;
+using SportStore.Pages.Helpers;
+using System.Web.Routing;
 
 namespace SportStore.Pages
 {
@@ -12,7 +14,24 @@ namespace SportStore.Pages
         private int pageSize = 7;
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            if (IsPostBack)
+            {
+                int selectedProductId;
+                if (int.TryParse(Request.Form["add"], out selectedProductId))
+                {
+                    Product selectedProduct = repo.Products
+                        .Where(p => p.ProductID == selectedProductId)
+                        .FirstOrDefault();
+                    if (selectedProduct != null)
+                    {
+                        SessionHelper
+                            .GetCart(Session)
+                            .AddItem(selectedProduct, 1);
+                        SessionHelper.Set(Session, SessionKey.RETURN_URL,Request.RawUrl);
+                        Response.Redirect(RouteTable.Routes.GetVirtualPath(null, "cart", null).VirtualPath);
+                    }
+                }
+            }
         }
 
         public IEnumerable<Product> GetProducts()

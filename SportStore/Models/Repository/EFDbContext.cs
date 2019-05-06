@@ -6,5 +6,6 @@ namespace SportStore.Models.Repository
     {
         //Product model will be used to represent rows in the Product table
         public DbSet<Product> Products { get; set; }
+        public DbSet<Order> Orders { get; set; }
     }
 }
